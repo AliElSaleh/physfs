@@ -1,0 +1,53 @@
+Assembly PhysFS
+Type static_lib
+
+SourceDirectory src
+Includes src
+
+if _platform != haiku	    ExcludedSourceFiles *.cpp
+if _platform == windows     ExcludedSourceFiles *_posix.c *_qnx.c *_unix.c *_os2.c *_haiku.c
+if _platform == linux|apple ExcludedSourceFiles *_qnx.c *_windows.c *_os2.c *_haiku.c
+if _platform == os2         ExcludedSourceFiles *_unix.c *_qnx.c *_windows.c *_haiku.c *_posix.c
+if _platform == haiku       ExcludedSourceFiles *_unix.c *_qnx.c *_windows.c *_os2.c *_posix.c
+
+WarningFlags [
+    -Wall 
+    -Wextra 
+    -Wconversion 
+    -Wpedantic 
+]
+
+DisabledWarningFlags [
+    -Wno-unused-parameter 
+    -Wno-sign-conversion 
+    -Wno-implicit-int-conversion 
+    -Wno-string-conversion
+]
+
+WarningErrorFlags [
+    -Werror=vla 
+    -Werror=implicit-function-declaration 
+    -Werror=pointer-arith
+]
+
+CompilerFlags -std=c99 -O3 -fno-exceptions -fno-math-errno $WarningFlags $DisabledWarningFlags $WarningErrorFlags
+LinkerFlags -shared
+
+if _platform == apple LinkerFlags -framework IOKit -framework Foundation
+
+if _platform == linux Defines _XOPEN_SOURCE _XOPEN_SOURCE_EXTENDED
+
+Libraries %_NativeLibs
+
+Defines [
+    PHYSFS_SUPPORTS_ZIP=%!no_zip
+    PHYSFS_SUPPORTS_7Z=%!no_7z
+    PHYSFS_SUPPORTS_GRP=%!no_grp
+    PHYSFS_SUPPORTS_WAD=%!no_wad
+    PHYSFS_SUPPORTS_HOG=%!no_hog
+    PHYSFS_SUPPORTS_MVL=%!no_mvl
+    PHYSFS_SUPPORTS_QPAK=%!no_qpak
+    PHYSFS_SUPPORTS_SLB=%!no_slb
+    PHYSFS_SUPPORTS_ISO9660=%!no_iso9660
+    PHYSFS_SUPPORTS_VDF=%!no_vdf
+]
