@@ -11,3 +11,5 @@ Please see LICENSE.txt for licensing information.
 ```
 riftbuild
 ```
+
+Fuck CMake [physfs.build](physfs.build)
