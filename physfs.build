@@ -11,8 +11,8 @@ if os2               ExcludedSourceFiles *_unix.c *_qnx.c *_windows.c *_haiku.c 
 if haiku             ExcludedSourceFiles *_unix.c *_qnx.c *_windows.c *_os2.c *_posix.c
 if !haiku            ExcludedSourceFiles *.cpp
 
-WarningFlags         -Wall -Wextra -Wconversion -Wpedantic
-DisabledWarningFlags -Wno-unused-parameter -Wno-sign-conversion -Wno-implicit-int-conversion -Wno-string-conversion -Wno-language-extension-token -Wno-sign-compare -Wno-empty-translation-unit -Wno-strict-prototypes
+WarningFlags         -Wall
+DisabledWarningFlags -Wno-unused-parameter -Wno-sign-conversion -Wno-implicit-int-conversion -Wno-string-conversion
 WarningErrorFlags    -Werror=vla -Werror=implicit-function-declaration -Werror=pointer-arith
 
 CompilerFlags        -std=c99 -O3 -fno-exceptions -fno-math-errno $WarningFlags $DisabledWarningFlags $WarningErrorFlags
