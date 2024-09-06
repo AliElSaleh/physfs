@@ -1,9 +1,10 @@
 Assembly PhysFS
 Type     lib
 Version  3.3.0
+Compiler %%cl
 
-SourceDirectory src
-Includes        src
+SourceDirectory      src
+Includes             src
 
 if windows           ExcludedSourceFiles *_posix.c *_qnx.c *_unix.c *_os2.c *_haiku.c
 if linux|apple       ExcludedSourceFiles *_qnx.c *_windows.c *_os2.c *_haiku.c
@@ -11,11 +12,13 @@ if os2               ExcludedSourceFiles *_unix.c *_qnx.c *_windows.c *_haiku.c 
 if haiku             ExcludedSourceFiles *_unix.c *_qnx.c *_windows.c *_os2.c *_posix.c
 if !haiku            ExcludedSourceFiles *.cpp
 
-WarningFlags         -Wall
-DisabledWarningFlags -Wno-unused-parameter -Wno-sign-conversion -Wno-implicit-int-conversion -Wno-string-conversion
-WarningErrorFlags    -Werror=vla -Werror=implicit-function-declaration -Werror=pointer-arith
+if !cl {
+    WarningFlags         -Wall
+    DisabledWarningFlags -Wno-unused-parameter -Wno-sign-conversion -Wno-implicit-int-conversion -Wno-string-conversion
+    WarningErrorFlags    -Werror=vla -Werror=implicit-function-declaration -Werror=pointer-arith
 
-CompilerFlags        -std=c99 -O3 -fno-exceptions -fno-math-errno $WarningFlags $DisabledWarningFlags $WarningErrorFlags
+    CompilerFlags        -std=c99 -O3 -fno-exceptions -fno-math-errno $WarningFlags $DisabledWarningFlags $WarningErrorFlags
+}
 
 if windows           Libraries   user32 advapi32 shell32
 if apple             LinkerFlags -framework IOKit -framework Foundation
@@ -33,3 +36,5 @@ Defines [
     PHYSFS_SUPPORTS_ISO9660=%!no_iso9660
     PHYSFS_SUPPORTS_VDF=%!no_vdf
 ]
+
+AssertCompiler clang gcc cl
