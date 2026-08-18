@@ -1,0 +1,86 @@
+Assembly PhysFS
+Type:!shared static_lib
+Type:shared  shared_lib
+Version  3.3.0
+Compiler %%cl
+Assert.Compiler clang gcc cl
+
+SourceDirectory           src
+Compiler.Includes(export) src
+
+if windows           SourceFiles.Exclude *_posix.c *_qnx.c *_unix.c *_os2.c *_haiku.c
+if linux|apple       SourceFiles.Exclude *_qnx.c *_windows.c *_os2.c *_haiku.c
+if os2               SourceFiles.Exclude *_unix.c *_qnx.c *_windows.c *_haiku.c *_posix.c
+if haiku             SourceFiles.Exclude *_unix.c *_qnx.c *_windows.c *_os2.c *_posix.c
+if !haiku            SourceFiles.Exclude *.cpp
+if !apple            SourceFiles.Exclude *_apple.m
+
+SourceFiles.Exclude  *_winrt.cpp   # we consume WinRT components, we do not author them
+
+if !cl
+{
+    WarningFlags         -Wall
+    DisabledWarningFlags -Wno-unused-parameter -Wno-sign-conversion -Wno-implicit-int-conversion -Wno-string-conversion
+    WarningErrorFlags    -Werror=vla -Werror=implicit-function-declaration -Werror=pointer-arith
+
+    Compiler.Flags        -std=c99 -O3 -fno-exceptions -fno-math-errno $WarningFlags $DisabledWarningFlags $WarningErrorFlags
+}
+
+Compiler.Flags:werror:!cl -Werror
+Compiler.Flags:werror:cl  /WX
+
+Libraries:windows      user32 advapi32 shell32
+Libraries:haiku        be root
+Libraries:unix:!apple  pthread
+Apple.Frameworks       IOKit Foundation
+Compiler.Defines:linux _XOPEN_SOURCE _XOPEN_SOURCE_EXTENDED
+
+# the static library exports no dll symbols
+Compiler.Defines:!shared:windows PHYSFS_STATIC
+Compiler.Defines:!shared:os2     PHYSFS_STATIC
+
+Linker.Flags:shared:mingw -static-libgcc
+
+Compiler.Defines
+[
+    PHYSFS_SUPPORTS_ZIP=%!no_zip
+    PHYSFS_SUPPORTS_7Z=%!no_7z
+    PHYSFS_SUPPORTS_GRP=%!no_grp
+    PHYSFS_SUPPORTS_WAD=%!no_wad
+    PHYSFS_SUPPORTS_CSM=%!no_csm
+    PHYSFS_SUPPORTS_HOG=%!no_hog
+    PHYSFS_SUPPORTS_MVL=%!no_mvl
+    PHYSFS_SUPPORTS_QPAK=%!no_qpak
+    PHYSFS_SUPPORTS_ROFS=%!no_rofs
+    PHYSFS_SUPPORTS_SLB=%!no_slb
+    PHYSFS_SUPPORTS_ISO9660=%!no_iso9660
+    PHYSFS_SUPPORTS_VDF=%!no_vdf
+    PHYSFS_SUPPORTS_LECARCHIVES=%!no_lecarchives
+    PHYSFS_SUPPORTS_POD=%!no_pod
+]
+
+option.shared         Build a shared library instead of a static one
+option.werror         Treat warnings as errors
+
+option.no_zip         Disable ZIP support
+option.no_7z          Disable 7zip support
+option.no_grp         Disable Build Engine GRP support
+option.no_wad         Disable Doom WAD support
+option.no_csm         Disable Chasm The Rift CSM.BIN support
+option.no_hog         Disable Descent I/II HOG support
+option.no_mvl         Disable Descent I/II MVL support
+option.no_qpak        Disable Quake I/II QPAK support
+option.no_rofs        Disable Resident Evil 3 ROFS support
+option.no_slb         Disable I-War / Independence War SLB support
+option.no_iso9660     Disable ISO9660 support
+option.no_vdf         Disable Gothic I/II VDF archive support
+option.no_lecarchives Disable LucasArts GOB/LAB/LFD archive support
+option.no_pod         Disable Terminal Reality POD archive support
+
+.Help
+{
+    To build the PhysFS static library, just run: riftbuild
+    To build the PhysFS shared library, just run: riftbuild shared
+
+    To view more options, run: riftbuild options
+}
